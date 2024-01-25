@@ -1,0 +1,231 @@
+---
+title: "EmpowerX"
+date: "(`r Sys.Date()`)"
+output: 
+  flexdashboard::flex_dashboard:
+    theme: yeti
+    orientation: columns
+runtime: shiny
+---
+
+<!-- 
+DETAILS OF EMPOWERX
+
+Structure:
+----- Start page: scrapes empower to get details. users modify details which are saved in the database,
+----- Degree: checks start page to generate details grouped by requirement,
+----- Timeline: checks start page to generate details grouped by semester and allows users to add courses,
+----- Registration: scrapes empower to show course catalog and generates a timetable,
+----- Courses: imports data from sheets to show all courses offered,
+----- Programs: imports data from sheets to show all programs offered,
+----- Eval: leads user to forms and shows total results of forms.
+
+Parts:
+- Rmd: this file which allows communication b/w user and service,
+- sheet: 2 google sheets: 
+    - 1: contains all courses and programs
+    - 2: results of form
+- form: list of google forms for courses and instructors
+- database: contains user input data
+- empower: student portal which is to be scraped
+-->
+
+```{r initial_setup}
+# libraries
+## rendering
+library("flexdashboard")
+library("shiny")
+library("DT")
+## data I/O
+library("googlesheets4")
+## data manipulation
+library("magrittr")
+library("dplyr")
+library("stringr")
+
+# import data
+
+# functions
+```
+
+<!------------------------------------------------------------------------------------------------->
+
+Start Page
+============
+
+row{data-width=400}
+------------
+
+### Login
+
+get empower username and password. do not save password. use username as id in database
+
+### Details
+
+get details from empower and allow user to change them, eg. admission session, program details
+
+row{data-width=600}
+------------
+
+### Overview
+
+stats, eg. % degree completed, no. of courses remaining by requirement
+
+### Finances
+
+neat table to show finances of current semester
+
+<!------------------------------------------------------------------------------------------------->
+
+Degree
+============
+
+column{.sidebar data-width=250}
+------------
+### Search
+user's degree on basis of info in start page
+
+row{data-width=750}
+------------
+
+### General Education
+### Major 1
+### Major 2
+### Minor 1
+### Minor 2
+### Specialization
+### Free Elective
+
+<!------------------------------------------------------------------------------------------------->
+
+Timeline
+============
+
+column{.sidebar data-width=250}
+------------
+### Search
+generate semester names based on admission session
+user's semesters from empower. allow user to add courses to future semesters to plan out degree. 
+
+row{data-width=750}
+------------
+
+### Semester 0.0 - Transfer
+### Semester 1.0 - FALL XX / Semester 1.0 - SPRING XX+1
+### Semester 2.0 - SPRING XX+1 / Semester 1.5 - SUMMER XX+1
+### Semester 2.5 - SUMMER XX+1 / Semester 2.0 - FALL XX+1
+
+<!------------------------------------------------------------------------------------------------->
+
+Registration
+============
+
+column{.sidebar data-width=250}
+------------
+### Search
+get past 2yrs data from empower and allow user to search it. add checkbox to each course. If checkbox is true, use that course to generate a timetable whih can be downloaded as a jpg/png.
+
+column{data-width=325}
+------------
+### Courses (- det, + checkbox)
+
+column{data-width=325}
+------------
+### Timetable
+
+<!------------------------------------------------------------------------------------------------->
+
+Courses
+============
+
+column{.sidebar data-width=250}
+------------
+
+### Search
+
+column{data-width=750}
+------------
+
+### Courses
+table for courses
+
+<!------------------------------------------------------------------------------------------------->
+
+Programs
+============
+
+column{.sidebar data-width=250}
+------------
+### Search
+allow users to search majors, minors and specializations
+connect with sheets
+
+row{data-width=350}
+------------
+
+### Program details
+
+### Credit/Course distibution
+
+column{.tabset data-width=400}
+------------
+
+### All courses
+
+### Core courses
+
+### Elective courses
+
+<!------------------------------------------------------------------------------------------------->
+
+Evaluation
+============
+
+row{data-width=500}
+------------
+
+### Course
+
+### Instructor
+
+column(data-width=500)
+------------
+### Evaluation Report
+LOW PRIORITY
+
+provide links to google forms to rate courses and instrutors. Generate a report on basis of ans. do not inlude comments.
+
+<!------------------------------------------------------------------------------------------------->
+
+Inbox
+============
+
+column{.sidebar data-width=300}
+------------
+### Log in details
+LOW PRIORITY
+
+column{data-width=700}
+------------
+### Inbox
+
+<!------------------------------------------------------------------------------------------------->
+
+Moodle
+============
+
+column{.sidebar data-width=300}
+------------
+### Log in details
+LOW PRIORITY
+
+column{.tabset data-width=700}
+------------
+
+### Course 1
+### Course 2
+### Course 3
+### Course 4
+### Course 5
+
+<!------------------------------------------------------------------------------------------------->
