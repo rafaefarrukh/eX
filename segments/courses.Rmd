@@ -1,0 +1,148 @@
+---
+    title: "EmpowerX"
+date: "(`r Sys.Date()`)"
+output: 
+    flexdashboard::flex_dashboard:
+    theme: yeti
+orientation: columns
+runtime: shiny
+---
+    
+    ```{r initial_setup}
+# LIBRARIES ######################################
+# rendering
+library("flexdashboard")
+library("shiny")
+library("DT")
+# data I/O
+library("googlesheets4")
+# data manipulation
+library("tidyverse")
+library("magrittr")
+library("dplyr")
+library("stringr")
+
+# IMPORT DATA FROM GOOGLE SHEETS #################
+
+gs4_deauth()
+cc <- read_sheet("https://docs.google.com/spreadsheets/d/1Scnezau55S2MUUsUlRE21wTWgDEQCWLg9BqJVw7pqo8/edit?usp=sharing", sheet = 4)
+```
+
+<!------------------------------------------------------------------------------------------------->
+    
+Courses
+============
+    
+column{.sidebar data-width=350}
+------------
+### Filter Courses
+    
+Delete courses from search bar to remove them from search and enter courses into search bar to add them to search.
+
+
+To search using keywords, use the search bar on the top right.
+
+```{r input_courses}
+# search bar for choosing departments
+selectizeInput(
+    inputId = "dept",
+    label = "Department",
+    multiple = TRUE,
+    choices = unique(cc$dept),
+    selected = unique(cc$dept),
+)
+
+# reset button for departments
+actionButton(inputId = "reset_dept", label = "Reset Courses")
+
+# reset departments
+observeEvent(input$reset_dept, {
+    updateSelectizeInput(inputId = "dept", label = "Department", selected = unique(cc$dept))
+})
+
+# search bar for choosing credits
+selectizeInput(
+    inputId = "credit",
+    label = "Credits",
+    multiple = TRUE,
+    choices = unique(cc$credit),
+    selected = unique(cc$credit),
+)
+
+# reset button for credits
+actionButton(inputId = "reset_credit", label = "Reset Credits")
+
+# reset credits
+observeEvent(input$reset_credit, {
+    updateSelectizeInput(inputId = "credit", label = "Credits", selected = unique(cc$credit))
+})
+
+# search bar for choosing prereq
+selectizeInput(
+    inputId = "prereq",
+    label = "Prerequisite",
+    multiple = FALSE,
+    choices = c("None", unique(cc$code)),
+    selected = "None",
+)
+
+# reset button for prereq
+actionButton(inputId = "reset_prereq", label = "Reset Prerequisite")
+
+# reset prereq
+observeEvent(input$reset_prereq, {
+    updateSelectizeInput(inputId = "prereq", label = "Prerequisite", selected = "None")
+})
+
+# search bar for choosing crosslist
+selectizeInput(
+    inputId = "crosslist_code",
+    label = "Crosslitsted Course Code",
+    multiple = FALSE,
+    choices = c("None", unique(cc$code)),
+    selected = "None",
+)
+
+# reset button for crosslist
+actionButton(inputId = "reset_crosslist_code", label = "Reset Crosslisted Course Code")
+
+# reset crosslist
+observeEvent(input$reset_crosslist_code, {
+    updateSelectizeInput(inputId = "crosslist_code", label = "Crosslitsted Course Code", selected = "None")
+})
+```
+
+column{data-width=450}
+------------
+### Courses 
+    
+    ```{r output_courses}
+# filter courses using inputs
+course_table <- reactive(cc %>%
+                             filter(dept %in% input$dept) %>% 
+                             filter(credit %in% input$credit) %>%
+                             {if(input$prereq != "None") filter(., str_detect(prereq, input$prereq)) else .} %>%
+                             {if(input$crosslist_code != "None") filter(., str_detect(crosslist_code, input$crosslist_code)) else .} 
+)
+
+# render the final data table
+renderDT(datatable(course_table(), 
+                   rownames = FALSE, 
+                   colnames = c("Department", "Code", "Title", "Credit", "Detail", "Prerequisite", "Crosslisted Courses"),
+                   options = list(
+                       scrollY = "200px",
+                       autoWidth = TRUE,
+                       columnDefs = list(
+                           list(width = '50px', targets = c(0)),
+                           list(width = '75px', targets = c(1,5,6)),
+                           list(width = '50px', targets = c(3)),
+                           list(width = '175px', targets = c(2)),
+                           list(width = '500px', targets = c(4)),
+                           list(className = 'dt-center', targets = c(0,1,3,6))
+                       )
+                   )
+) %>% formatStyle(c('dept','code'), fontWeight = 'bold')
+)
+```
+
+<!------------------------------------------------------------------------------------------------->
