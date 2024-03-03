@@ -1,4 +1,19 @@
+<H1>EmpowerX</H1> 
+
 EmpowerX is a website written in R for the purpose of assisting FCCU undergraduate students in viewing courses/programs offered by FCCU and tracking their own degree. The following details are regarding the code.
+
+<H2> Instructions to Install </H2>
+
+If you want to run it locally from your desktop, follow these instructions: 
+- download the files
+- ensure that R is running version 4.3.2 (2023-10-31") -- "Eye Holes" and you have R Studio installed.
+- download the required packages: flexdashboard, shiny, shinyWidgets, tidyverse, DT, lubridate, rhandsontable
+```console
+install.packages("flexdashboard"); install.packages("shiny"); install.packages("shinyWidgets"); install.packages("tidyverse"); install.packages("DT"); install.packages("lubridate"); install.packages("rhandsontable")
+```
+- open "EmpowerX.Rproj"
+- it should have the latest version of EmpowerX already loaded
+- render the document pressing the "Run Document" buton or pressing Ctrl + Shift + K.
 
 The following link redirects to a google drive which contains the following files: https://drive.google.com/drive/folders/1BMhFFwi2kjcJrrBReenE3ZXKXEoKlxrV?usp=sharing
 - EmpowerX - Sort Course Catalog: converts the course catalog pdf into a tabular form in a semi-manual method and stores all informaion regarding course and program details.
@@ -10,7 +25,7 @@ The following link redirects to the github page which contains all the relevant 
 The following abbreviations are used: 
 - dg = degree, ma = major, mi = minor, sp = specialization, ct = certification, ged = general education, frel = free elective
 - cr = credits, co = courses
-- c (as a suffix)  = core, e (as a suffix) = elective
+- c (as a suffix")  = core, e (as a suffix") = elective
 - dept = department, preq = prerequisite, cc = cross listed courses
 
 The following naming conventions are used:
@@ -20,15 +35,15 @@ The following naming conventions are used:
 
 The important datasets involved are:
 
-- courses (csv) = details of all courses offered (offline copy from google sheets)
-- programs (csv) = details of all programs offered (offline copy from google sheets)
-- grades (data frame) = grading system
+- courses (csv") = details of all courses offered (offline copy from google sheets")
+- programs (csv") = details of all programs offered (offline copy from google sheets")
+- grades (data frame") = grading system
 
-- timeline (reactive) =  semester details based on yd_sem, yd_yr
-- user_data (reactive) = details of all courses based on timeline, sx.y, xyz
-- user_overview (reactive) = credit and gpa distribution based on timeline, user_data, sx.y, xyz
+- timeline (reactive") =  semester details based on yd_sem, yd_yr
+- user_data (reactive") = details of all courses based on timeline, sx.y, xyz
+- user_overview (reactive") = credit and gpa distribution based on timeline, user_data, sx.y, xyz
 
-- sx.y (reactive) = courses and grades taken in that semester. Uses rhandsontable to interact with user
+- sx.y (reactive") = courses and grades taken in that semester. Uses rhandsontable to interact with user
 
-- export (csv) = all user inputs that are to be exported to "import"
-- import (reactive) = all user inputs that are to be imported from "export"
+- export (csv") = all user inputs that are to be exported to "import"
+- import (reactive") = all user inputs that are to be imported from "export"
