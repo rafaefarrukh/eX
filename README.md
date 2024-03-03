@@ -22,13 +22,13 @@ EmpowerX is simply a Rmarkdown file which needs to be rendered. To do so, do the
 
 <H2> Data Files </H2>
 
-The course catalog is obtained from the official [FCCU website]([url](https://www.fccollege.edu.pk/academic-catalogs-and-handbooks/))
+The course catalog is obtained from the official [FCCU website](https://www.fccollege.edu.pk/academic-catalogs-and-handbooks/)
 
-This [google drive]([url](https://drive.google.com/drive/folders/1BMhFFwi2kjcJrrBReenE3ZXKXEoKlxrV?usp=sharing)) contains the following files:
+This [google drive](https://drive.google.com/drive/folders/1BMhFFwi2kjcJrrBReenE3ZXKXEoKlxrV?usp=sharing) contains the following files:
 - EmpowerX - Sort Course Catalog: converts the course catalog pdf into a tabular form in a semi-manual method and stores all informaion regarding course and program details
 - EmpowerX - Degree Details: a presentation which shows details about FCCU Undergraduate Degree
 
-This [github repo]([url](https://github.com/rafaefarrukh/EmpowerX)) contains the following files: 
+This [github repo](https://github.com/rafaefarrukh/EmpowerX) contains the following files:
 - data files which consist of offline copies of files in the google drive
 - the latest version of EmpowerX
 - EmpowerX_v0.0.0: a layout showing future plans of EmpowerX
