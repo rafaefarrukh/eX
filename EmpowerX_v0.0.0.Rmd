@@ -1,0 +1,103 @@
+---
+title: "EmpowerX"
+date: "(`r Sys.Date()`)"
+output: 
+  flexdashboard::flex_dashboard:
+    theme: yeti
+    orientation: columns
+runtime: shiny
+---
+
+<!-- 
+DETAILS OF EMPOWERX
+
+Structure:
+----- Start page: scrapes empower to get details. users modify details which are saved in the database,
+----- Degree: checks start page to generate details grouped by requirement,
+----- Timeline: checks start page to generate details grouped by semester and allows users to add courses,
+----- Registration: scrapes empower to show course catalog and generates a timetable,
+----- Courses: imports data from sheets to show all courses offered,
+----- Programs: imports data from sheets to show all programs offered,
+----- Eval: leads user to forms and shows total results of forms.
+
+Parts:
+- Rmd: this file which allows communication b/w user and service,
+- sheet: 2 google sheets: 
+    - 1: contains all courses and programs
+    - 2: results of form
+- form: list of google forms for courses and instructors
+- database: contains user input data
+- empower: student portal which is to be scraped
+-->
+
+<!------------------------------------------------------------------------------------------------->
+
+Registration
+============
+
+column{.sidebar data-width=250}
+------------
+### Search
+get past 2yrs data from empower and allow user to search it. add checkbox to each course. If checkbox is true, use that course to generate a timetable whih can be downloaded as a jpg/png.
+
+column{data-width=325}
+------------
+### Courses (- det, + checkbox)
+
+column{data-width=325}
+------------
+### Timetable
+
+<!------------------------------------------------------------------------------------------------->
+
+Evaluation
+============
+
+row{data-width=500}
+------------
+
+### Course
+
+### Instructor
+
+column(data-width=500)
+------------
+### Evaluation Report
+LOW PRIORITY
+
+provide links to google forms to rate courses and instrutors. Generate a report on basis of ans. do not inlude comments.
+
+<!------------------------------------------------------------------------------------------------->
+
+Inbox
+============
+
+column{.sidebar data-width=300}
+------------
+### Log in details
+LOW PRIORITY
+
+column{data-width=700}
+------------
+### Inbox
+
+<!------------------------------------------------------------------------------------------------->
+
+Moodle
+============
+
+column{.sidebar data-width=300}
+------------
+### Log in details
+LOW PRIORITY
+
+column{.tabset data-width=700}
+------------
+
+### Course 1
+### Course 2
+### Course 3
+### Course 4
+### Course 5
+
+<!------------------------------------------------------------------------------------------------->
