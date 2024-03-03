@@ -5,7 +5,7 @@ The following link redirects to a google drive which contains the following file
 - EmpowerX - Degree Details: a presentation which shows details about FCCU Undergraduate Degree
 - It also contains EmpowerX.Rproj, latest version of EmpowerX and a copy of this README file.
 
-The following link redirects to the github page which contains all the relevant data files of this project.
+The following link redirects to the github page which contains all the relevant data files of this project: https://github.com/rafaefarrukh/EmpowerX
 
 The following abbreviations are used: 
 - dg = degree, ma = major, mi = minor, sp = specialization, ct = certification, ged = general education, frel = free elective
