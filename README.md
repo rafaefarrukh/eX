@@ -49,15 +49,17 @@ The following naming conventions are used:
 
 The important datasets involved are:
 
-- courses (csv") = details of all courses offered (offline copy from google sheets")
-- programs (csv") = details of all programs offered (offline copy from google sheets")
-- grades (data frame") = grading system
-
-- timeline (reactive") =  semester details based on yd_sem, yd_yr
-- user_data (reactive") = details of all courses based on timeline, sx.y, xyz
-- user_overview (reactive") = credit and gpa distribution based on timeline, user_data, sx.y, xyz
-
-- sx.y (reactive") = courses and grades taken in that semester. Uses rhandsontable to interact with user
-
-- export (csv") = all user inputs that are to be exported to "import"
-- import (reactive") = all user inputs that are to be imported from "export"
+- external:
+  - courses (csv) = details of all courses offered (offline copy from google sheets)
+  - programs (csv) = details of all programs offered (offline copy from google sheets)
+  - degree_details (pdf) = presentation explaining FCCU undergraduate degree
+- internal:
+  - grades (data frame) = grading system
+- evaluated:
+  - timeline (reactive) =  semester details based on yd_sem, yd_yr
+  - user_data (reactive) = details of all courses based on timeline, sx.y, xyz
+  - user_overview (reactive) = credit and gpa distribution based on timeline, user_data, sx.y, xyz
+  - sx.y (reactive) = courses and grades taken in that semester. Uses rhandsontable to interact with user
+- export/import:
+  - export (csv) = all user inputs that are to be exported to "import"
+  - import (reactive) = all user inputs that are to be imported from "export"
