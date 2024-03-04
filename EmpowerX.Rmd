@@ -9,44 +9,15 @@ output:
 runtime: shiny
 ---
 
-<!-- Important Details
-
-EmpowerX is a website written in R for the purpose of assisting FCCU undergraduate students in viewing courses/programs offered by FCCU and tracking their own degree. The following details are regarding the code.
-
-The following abbreviations are used:
-- dg = degree, ma = major, mi = minor, sp = specialization, ct = certification, ged = general education, frel = free elective
-- cr = credits, co = courses
-- c (as a suffix)  = core, e (as a suffix) = elective
-- dept = department, preq = prerequisite, cc = cross listed courses
-
-The following naming conventions are used:
-- code chunks names = X/Y/Z, where X = H1 abv, Y = H2 abv, Z = H3 name
-- semesters = sx.y, where x = {0,1,2,...,8}, y = {0,5}
-- programs = xyz, where x = {ma,mi,sp}, y = {1,2}, z = {c,e}
-
-The important datasets involved are:
-
-- courses (csv) = details of all courses offered
-- programs (csv) = details of all programs offered
-- grades (data frame) = grading system
-
-- timeline (reactive) =  semester details based on yd_sem, yd_yr
-- user_data (reactive) = details of all courses based on timeline, sx.y, xyz
-- user_overview (reactive) = credit and gpa distribution based on timeline, user_data, sx.y, xyz
-
-- sx.y (reactive) = courses and grades taken in that semester. Uses rhandsontable to interact with user
-
-- export (csv) = all user inputs that are to be exported to "import"
-- import (reactive) = all user inputs that are to be imported from "export"
-
-- https://docs.google.com/spreadsheets/d/1Scnezau55S2MUUsUlRE21wTWgDEQCWLg9BqJVw7pqo8/edit?usp=sharing (google sheets) = contains all program details and converts course catalog pdf into a tabular form. courses and programs are offline versions of this google sheet
-
+<!-- v1.0.0
+Github repo: https://github.com/rafaefarrukh/EmpowerX 
+Read README.md for details such as code notation and data files.
 -->
 
 ```{r Setup}
 
 # Libraries ----
-library(flexdashboard); library(shiny); library(shinyWidgets); library(tidyverse); library(DT); library(lubridate); library(rhandsontable);
+library(flexdashboard); library(shiny); library(shinyWidgets); library(tidyverse); library(DT); library(lubridate); library(rhandsontable)
 
 # Data ----
 
@@ -59,9 +30,9 @@ programs <- read.csv("data/programs_22.csv")
 names(programs) <- c("Program", "nature", "Details", "Requirements", "Course Categories", "Core Courses", "Elective Courses", "Total Credits", "Core Credits", "Elective Credits", "Total Courses", "Core Courses", "Elective Courses")
 
 ## Semester lengths (to be changed)
-SPRING <- 2:6; SUMMER <- 7:8; FALL <- 9:12; WINTER <- 1
+SPRING <- 1:6; SUMMER <- 7:8; FALL <- 9:12; WINTER <- 0
 
-## Grading system (col names will be displayed as is)
+## Grading system
 grades <- data.frame(
     Grades = c("A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "F", "NS", "W", "AW", "AU", "I", "T"),
     GPA = c("4.0", "3.7", "3.3", "3.0", "2.7", "2.3", "2.0", "1.7", "1.3", "1.0", "0", "0", "", "", "", "", ""),
@@ -74,7 +45,8 @@ None <- NA; W <- NA; AW <- NA; AU <- NA; I <- NA; T <- NA
 # Functions ----
 
 ## Extract info from "programs" based on program name and nature
-## UP/SP/Details UP/SP/Requirements UP/SP/Credits_and_Courses UP/SP/Core UP/SP/Elective UP/SP/Course_Categories YD/C/Courses YD/O/Distribution
+## Used in: UP/SP/Details UP/SP/Requirements UP/SP/Credits_and_Courses UP/SP/Core UP/SP/Elective UP/SP/Course_Categories YD/C/Courses YD/O/Distribution
+
 get_program <- function(input, output, nature) {
     
     # input = name of program
@@ -90,82 +62,74 @@ get_program <- function(input, output, nature) {
 }
 
 ## Calculate total number of credits based on course codes
-## YD/D/General YD/D/Courses YD/D/Transfer YD/D/Elective YD/S/Edit
+## Used in: YD/D/General YD/D/Courses YD/D/Transfer YD/D/Elective YD/S/Edit
 get_credits <- function(input) {sum(as.numeric(unlist(filter(courses[4], courses$Code %in% input))), na.rm = TRUE)}
 
 ```
 
 <!------------------------------------------------------------------------------------------------->
 
-# About
+# Home {data-orientation="rows"}
 
-## column {data-width=400}
+## row {data-height=100}
 
-### About
+### {}
 
-**IMPORTANT: THIS IS NOT AN OFFICIAL SERVICE OFFERED BY FCCU. IT IS DEVELOPED AND MAINTAINED BY A STUDENT. AS SUCH IT MAY NOT PROVIDE INFORMATION FULLY UP TO DATE WITH FCCU AND ITS POLICIES.**
+<center> <font size="10"> **EmpowerX** </font> </center>
 
-`r br()`
+## row {data-height=900}
 
-EmpowerX is a service designed to help FCCU undergraduate students manage their 4 year degree. 
+### About {data-width=500}
 
-`r br()`
+<center>
 
-Note that this service uses free tools to make it accessible on-line, as such it is slow. So kindly be patient when using this service. Alternatively, if you have experience with R language, you can find the code files at *add link* and run it locally from your device.
+<H4> <font color = "red"> **DISCLAIMER: EMPOWERX IS NOT AN OFFICIAL SERVICE OFFERED BY FCCU. AS SUCH THE INFORMATION PRESENT HERE MAY NOT BE FULLY UP TO DATE WITH FCCU AND ITS POLICIES.** </font> </H4>
 
-If you want to use this service to track your degree, remember to export your data before exiting. EmpowerX blanks out after 5 minutes of inactivity and does not store your data. So if you do not save your data, it will be lost. 
+<br> <hr> <br>
 
-Currently, this service only supports students who are graduating within 4 years. If a student is taking additional semesters, they may not be able to track their degree properly using this service.
+<H4> **LIMITATIONS AND ISSUES** </H4>
 
-This service follows the 2020 - 2021 course catalogue. Different course catalogue may have different details, eg. different credit requirement for graduation. Students not following the 2020 - 2021 catalogue must check for differences between their catalogue and the details in this service. 
+</center>
 
-*Work is being carried out to improve this service and address the issues above. But it will take time.*
+EmpowerX relies on free tools to make itself accessible online, as a result it is **extremely slow**. So kindly be patient when using empowerX. 
 
-`r br()`
+Alternatively, if you have any experience with R programming language, you can **download** empowerX and run it locally from your device. The github repo can be found here: https://github.com/rafaefarrukh/EmpowerX
 
-For any queries, complaints and suggestions, contact me at [261936352\@formanite.fccollege.edu.pk](mailto:261936352@formanite.fccollege.edu.pk){.email}
+If you want to use this service to track your degree, remember to **export your data before exiting**. EmpowerX blanks out after 10 minutes of inactivity and does not store your data. So if you do not save your data it will be lost and you will have to re enter it.
 
-## column {data-width=600}
+Currently, empowerX only supports upto **8 regular semesters**. Students who are taking additional semesters may not be able to track their degree properly.
 
-### Services offered by EmpowerX
+EmpowerX follows the **2022 - 2023 course catalogue**. Different catalogues may have different details, eg. different credit requirement for graduation. Students not following the 2022 - 2023 catalogue must check for differences between their catalogue and the 2022 - 2023 catalogue.
 
-#### **Undergraduate Program**
+*EmpowerX is a work in progress website and the limitations and issues above are being worked on. But implementing them will take time.*
 
-##### **Details**
+<br> <hr> <br>
 
-A presentation which explains the undergraduate degree offered by FCCU
+<center> <H4> **CONTACT** </H4> </center>
 
-##### **Search Courses**
+For any queries, complaints or/and suggestions, contact me at [261936352\@formanite.fccollege.edu.pk](mailto:261936352@formanite.fccollege.edu.pk){.email}
 
-The contents of the course catalogue are displayed in a table format which allows students to easily view the 850+ courses and filter them according to departments and credits. Moreover, students can use the search bar to search using prerequisites and keywords. This allows students to easily go through the courses and choose better courses suited to themselves.
+### Services offered by EmpowerX {data-width=500}
 
-##### **Search Programs**
+<H4> **Undergraduate Program** </H4>
 
-The program details are displayed in a categorized way which allows students to easily view the dozens of programs offered by FCCU and easily note their credit and course requirements as well as the core and elective courses. This allows students to better plan their degree.
+**Details:** A presentation which explains details regarding the undergraduate degree.
 
-`r br()`
+**Search Courses:** View the 850+ courses offered by FCCU in an easy to view format.
 
-#### **Your Degree**
+**Search Programs:** View the 50+ programs (majors, minors, specializations and certifications) offered by FCCU in an easy to understand format.
 
-##### **Details**
+<br> <hr> <br>
 
-Here, students enter their details which are used to evaluate other parts of this service. This also allows students to create what if scenarios, such as "what if I do a minor" and "what if I do a double major". It also allows students to  export and import their data.
+<H4> **Your Degree** </H4>
 
-##### **Semesters**
+**Details:** Enter your basic information such as program details and elective courses. This is used to evaluate information in other parts. You can change these details to create *what if* scenarios as well. 
 
-Here, students enter their courses and grades according to the semester. This information is used to evaluate other parts of this service. This also allows students to plan out their degree in advance and create what if scenarios, such "how severely will my GPA be effected if I get a bad grade in these courses".
+**Semesters:** Enter the courses you have taken or plan on taking and their grades. This is used to evaluate information in other parts. You can use this to plan out your degree in advance. Note that this part is slightly glitchy and may not show all the columns properly. If this happens, click the columns which are present.
 
-This part is slightly glitchy and may not show columns at times. If this happens, deselect and select that semester again or wait for a few seconds. 
+**Courses:** View the courses that are required for your graduation. This part is evaluated from the other parts. You can filter by requirement and by semesters, allowing you to quickly audit your degree. You can use this along with the other parts to create *what if* scenarios, such as "if I turn my minor into a major, will I be able to complete the courses in time?"
 
-##### **Courses**
-
-This part is evaluated based on other parts of this service. Here, all the courses that the student needs to take (general education, free elective, program core and elective) are shown in a tabular way and categorized according to requirement and semester. Sorting by semester allows students to see which courses they have and have not taken. The courses that they have not taken or have not planned on taking will be grouped together as "No Group". This allows students to quickly audit their degree and check which of their courses are remaining. 
-
-##### **Overview**
-
-This part is evaluated based on other parts of this service. Here, some summary statistics are provided, such as current number of credits, CGPA and % degree completed. In addition, it allows students to view their credit and GPA distribution by semester and requirement. 
-
-It may take some time to get used to, but it shows an overview of the entire 4 year degree in a single table. This part may take a few seconds to load, so please be patient. 
+**Overview:** View summary statistics regarding your degree. The table shows your credit and CGPA distribution according to semesters and requirements. It can be a bit difficult to understand at first, but it allows you to view 4 years worth of information in a single table. Note that this part is a bit slow and takes a few seconds to load/refresh. 
 
 <!------------------------------------------------------------------------------------------------->
 
@@ -173,7 +137,7 @@ It may take some time to get used to, but it shows an overview of the entire 4 y
 
 ```{r UP/DD}
 
-tags$iframe(style="height:900px; width:100%; scrolling=yes", src="data/degree_details.pdf")
+tags$iframe(style="height:100%; width:100%; scrolling=yes", src="data/degree_details.pdf")
 
 ```
 
@@ -185,9 +149,11 @@ tags$iframe(style="height:900px; width:100%; scrolling=yes", src="data/degree_de
 
 ### Filter
 
-Select the department or credits you want to search by.
+Select the departments whose courses you want to see. Similarly, select the credits to view courses of those credits.
 
-To search using keywords, use the search bar on the top right of the table.
+If you want to search using a keyword, use the search bar on the top right of the table. 
+
+<br>
 
 ```{r UP/SC/Filter}
 
@@ -213,9 +179,9 @@ pickerInput(
 
 ## column {data-width="750"}
 
-### Courses
+### {}
 
-```{r UP/SC/Courses}
+```{r UP/SC/}
 
 renderDT(datatable(
     courses %>% filter(courses[,1] %in% input$dept, courses[,4] %in% input$cr),
@@ -243,12 +209,16 @@ renderDT(datatable(
 
 ### Search
 
-Choose a program to see its details. Only one program will be displayed at a time.
+Choose a program below to see its details.
+
+Note that only one program will be showed at a time.
+
+<br>
 
 ```{r UP/SP/Search}
 
 selectInput(
-    inputId = "dg", label = "Degres",
+    inputId = "dg", label = "Degrees",
     choices = c("None", sort(programs[which(programs[,2] == "degree"),1])), selected = "None"
 )
 
@@ -272,7 +242,7 @@ selectInput(
     choices = c("None", sort(programs[which(programs[,2] == "certification"),1])), selected = "None"
 )
 
-actionButton(inputId = "deselect_up_sp_search", label = "Reset")
+actionButton(inputId = "deselect_up_sp_search", label = "Reset", width = "100%")
 
 observeEvent(input$deselect_up_sp_search, {
     updateSelectInput(inputId = "dg", selected = "None")
@@ -492,11 +462,9 @@ All students are required to study 15 courses of General Education. Some of thes
 
 -   if your FEAT maths score is good, you are exempt from MATH 100. Instead you have to study another MATH course. Alternatively, if your FEAT maths score is very low, you will have to study MATH 095.
 
--   if your FEAT English score is very low, you will have to study ENGL 095 as well.
+-   if your FEAT English score is very low, you will have to study IEAP courses as well.
 
--   If you have studied Urdu B in o levels, you can apply for exception of URDU 101. Instead you will have to study another course from humanities
-
-In addition, if you have received C or higher grade in your A levels, you can apply for transfer credits. These transfer credits can fulfil your general education or major/minor requirement.
+Consult with N block to confirm course exemption or addition.
 
 You may have to take free elective courses to reach your credit requirement.
 
@@ -994,17 +962,17 @@ renderUI({
 
 ## column {data-width="300"}
 
-### Details
+### Details {data-height=400}
 
-In regular semesters (fall and spring), students are allowed to take 5 courses or 17 credits. However a student may apply for overload which lets them take a maximum of 7 courses or 23 credits.
+In regular semesters (FALL and SPRING), students take 5 courses (maximum 17 credits). However, a student may apply for semester overload which lets them take a maximum of 7 courses (maximum 22 credits).
 
-In summer semesters, students are allowed to take 2 courses or 7 credits. However a student may apply for overload which lets them take a maximum of 3 courses or 11 credits. Keep in mind that internships and research are only offered in summer.
+In non regular semesters (SUMMER and WINTER), students take up to 2 courses (maximum 8 credits). However, a student may apply for semester overload which lets them take a maximum of 3 courses (maximum 10 credits)
 
 Winter semesters are not being offered at the moment due to the disruption of the academic schedule.
 
-Although students are likely to have as summer/winter semester after your last semester, students are recommended to not consider this semester when planning their degree as that semester is meant as a backup for fullfiling requirements.
+Although you are likely to have as summer/winter semester after your 8th semester, you are recommended to not consider this semester when planning your degree as that semester is meant as a backup for fulfilling graduation requirements on time.
 
-### Grading System
+### Grading System {data-height=600}
 
 ```{r YD/S/Grades}
 
@@ -1020,6 +988,12 @@ renderTable(na.omit(grades), striped = TRUE, hover = TRUE)
 
 ### Sort Courses
 
+All of the courses that you have selected in "Details" page are shown here and have been labelled with semesters in which you have taken those courses or plan to.
+
+If you sort by semesters, all of the courses which you have not taken yet or have not planned to take will be shown in the "No Group" section. This can act like a check-list/audit showcasing which courses are remaining.
+
+<br>
+
 ```{r YD/C/Sort}
 
 selectInput(inputId = "yd_sort", label = "Sort courses by", choices = c("Requirement Wise" ,"Semester Wise"))
@@ -1028,17 +1002,11 @@ yd_sort_no <- reactive(if (input$yd_sort == "Requirement Wise") {4} else {5})
 
 ```
 
-### Details
-
-All of the courses that you have selected in "Details" page are shown here and have been labelled with semesters in which you have taken those courses or plan to.
-
-If you sort by semesters, all of the courses which you have not taken yet or have not planned to take will be shown in the "No Group" section. This can act like a checklist showcasing which courses are remaining.
-
 ## column {data-width="750"}
 
-### Your Courses
+### {}
 
-```{r YD/C/Courses}
+```{r YD/C/}
 
 user_data <- reactive({
     
@@ -1143,7 +1111,7 @@ renderDT(datatable(user_data(),
 
 renderValueBox(valueBox(
     value = as.numeric(user_overview()[19, ncol(user_overview())-1]),
-    icon = "fa-book", color = c("#FFFFCC")
+    icon = "fa-book", color = c("#e0fbfc")
 ))
 
 ```
@@ -1154,7 +1122,7 @@ renderValueBox(valueBox(
 
 renderValueBox(valueBox(
     value = user_overview()[22, ncol(user_overview())], 
-    icon = "fa-pencil"
+    icon = "fa-pencil", color = c("#e0fbfc")
 ))
 
 ```
@@ -1165,7 +1133,7 @@ renderValueBox(valueBox(
 
 renderValueBox(valueBox(
     value = timeline()[which(timeline()[,5] == "Current"), 4], 
-    icon = "fa-date", color = c("#FAF5EF")
+    icon = "fa-date", color = c("#e0fbfc")
 ))
 
 ```
@@ -1189,10 +1157,8 @@ renderGauge(gauge(
 
 renderValueBox(valueBox(
     value = as.numeric(
-        as.Date(paste0(as.numeric(timeline()[17,3]), "-", month(round(mean(get(timeline()[17,2])))), "-", "15"), tryFormats = c("%Y-%m-%d")) - 
-            as.Date(Sys.Date(), tryFormats = c("%Y-%m-%d"))),
-    icon = "fa-clock", 
-    color = c("#F0FFF0")
+        as.Date(paste0(as.numeric(timeline()[17,3]), "-", month(round(mean(get(timeline()[17,2])))), "-", "15"), tryFormats = c("%Y-%m-%d")) - as.Date(Sys.Date(), tryFormats = c("%Y-%m-%d"))),
+    icon = "fa-clock", color = c("#e0fbfc")
 ))
 
 
@@ -1264,7 +1230,7 @@ user_overview <- reactive({
                 mutate(points = as.numeric(GPA) * as.numeric(Credits)) %>%
                 summarize(gpa = sum(as.numeric(points), na.rm = TRUE)/ sum(as.numeric(Credits)))
             temp[j+1,16] <- as.character(round(temp3$gpa,2))
-                
+            
      }}
     
     # assign total credits for each semester (row wise)
