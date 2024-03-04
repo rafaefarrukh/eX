@@ -30,8 +30,8 @@ This [google drive](https://drive.google.com/drive/folders/1BMhFFwi2kjcJrrBReenE
 
 This [github repo](https://github.com/rafaefarrukh/EmpowerX) contains the following files:
 - data files which consist of offline copies of files in the google drive
-- the latest version of EmpowerX
-- EmpowerX_v0.0.0: a layout showing future plans of EmpowerX
+- EmpowerX.Rmd: latest version of EmpowerX
+- EmpowerX_v0.0.0.Rmd: a layout showing future plans of EmpowerX
 - README.md: this file
 
 <H2> Code Details and Notations </H2>
@@ -39,7 +39,7 @@ This [github repo](https://github.com/rafaefarrukh/EmpowerX) contains the follow
 The following abbreviations are used: 
 - dg = degree, ma = major, mi = minor, sp = specialization, ct = certification, ged = general education, frel = free elective
 - cr = credits, co = courses
-- c (as a suffix")  = core, e (as a suffix") = elective
+- c (as a suffix)  = core, e (as a suffix) = elective
 - dept = department, preq = prerequisite, cc = cross listed courses
 
 The following naming conventions are used:
