@@ -18,7 +18,8 @@ EmpowerX is simply a Rmarkdown file which needs to be rendered. To do so, do the
 1. Ensure you have R, R Studio and the pacakges
 2. Download this repo
 3. Open EmpowerX.Rproj
-4. Render the document by clicking the "Run Document" button or by using the shortcut keys "Ctrl + Shift + K"
+4. Open a .Rmd file
+5. Render the document by clicking the "Run Document" button or by using the shortcut keys "Ctrl + Shift + K"
 
 <H2> Data Files </H2>
 
@@ -46,20 +47,3 @@ The following naming conventions are used:
 - code chunks names = X/Y/Z, where X = H1 abv, Y = H2 abv, Z = H3 name
 - semesters = sx.y, where x = {0,1,2,...,8}, y = {0,5}
 - programs = xyz, where x = {ma,mi,sp}, y = {1,2}, z = {c,e}
-
-The important datasets involved are:
-
-- external:
-  - courses (csv) = details of all courses offered (offline copy from google sheets)
-  - programs (csv) = details of all programs offered (offline copy from google sheets)
-  - degree_details (pdf) = presentation explaining FCCU undergraduate degree
-- internal:
-  - grades (data frame) = grading system
-- evaluated:
-  - timeline (reactive) =  semester details based on yd_sem, yd_yr
-  - user_data (reactive) = details of all courses based on timeline, sx.y, xyz
-  - user_overview (reactive) = credit and gpa distribution based on timeline, user_data, sx.y, xyz
-  - sx.y (reactive) = courses and grades taken in that semester. Uses rhandsontable to interact with user
-- export/import:
-  - export (csv) = all user inputs that are to be exported to "import"
-  - import (reactive) = all user inputs that are to be imported from "export"
