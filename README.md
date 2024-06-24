@@ -26,8 +26,8 @@ EmpowerX requires the following to function:
 <H3> Installation Instructions </H3>
 
 EmpowerX is simply a Rmarkdown file which needs to be rendered. To do so, do the following;
-1. Ensure you have R, R Studio and the pacakges
-2. Download this repo
+1. Ensure you have R, R Studio and the pacakges mentioned above
+2. Download this repo (Code --> Download ZIP --> Extract the file)
 3. Open EmpowerX.Rproj
 4. Open a .Rmd file
 5. Render the document by clicking the "Run Document" button or by using the shortcut keys "Ctrl + Shift + K"
