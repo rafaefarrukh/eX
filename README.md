@@ -11,17 +11,19 @@ EmpowerX is a website written in R for the purpose of assisting FCCU undergradua
 [Checklist](https://empowerx.shinyapps.io/Checklist/): Generate a checklist of courses you need to study to graduate (can act as a degree audit as well).
 
 
-<H2> Requirements </H2>
+<H2> Installation </H2>
+
+<H3> Requirements </H3>
 
 EmpowerX requires the following to function:
-- R (any version above 4.0.0)
-- R Studio (any version)
+- R
+- R Studio
 - The following packages: flexdashboard, shiny, shinyWidgets, tidyverse, DT, lubridate, rhandsontable. Use the following command in the console to install these pacakges:
 
 ```console
 > install.packages("flexdashboard"); install.packages("shiny"); install.packages("shinyWidgets"); install.packages("tidyverse"); install.packages("DT"); install.packages("lubridate"); install.packages("rhandsontable")
 ```
-<H2> Installation Instructions </H2>
+<H3> Installation Instructions </H3>
 
 EmpowerX is simply a Rmarkdown file which needs to be rendered. To do so, do the following;
 1. Ensure you have R, R Studio and the pacakges
@@ -40,11 +42,10 @@ This [google drive](https://drive.google.com/drive/folders/1BMhFFwi2kjcJrrBReenE
 
 This [github repo](https://github.com/rafaefarrukh/EmpowerX) contains the following files:
 - data files which consist of offline copies of files in the google drive
-- EmpowerX.Rmd: latest version of EmpowerX
-- EmpowerX_v0.0.0.Rmd: a layout showing future plans of EmpowerX
+- Rmd files (main)
 - README.md: this file
 
-<H2> Code Details and Notations </H2>
+<H3> Code Details and Notations </H3>
 
 The following abbreviations are used: 
 - dg = degree, ma = major, mi = minor, sp = specialization, ct = certification, ged = general education, frel = free elective
