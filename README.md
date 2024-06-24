@@ -1,6 +1,8 @@
-<H1>EmpowerX</H1>
+<H1>empowerX</H1>
 
-EmpowerX is a website written in R for the purpose of assisting FCCU undergraduate students in viewing courses/programs offered by FCCU and tracking their own degree.
+eX is an unofficial collection of services meant to make degree planning easier for undergraduate students of FCCU.
+
+**Note: eX is made available online using free version of shinyapps making the website versions slow. Hence it is suggested that you download eX if possible.**
 
 <H2> Quick Links </H2>
 
