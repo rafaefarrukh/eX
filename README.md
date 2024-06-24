@@ -21,7 +21,7 @@ EmpowerX requires the following to function:
 - The following packages: flexdashboard, shiny, shinyWidgets, tidyverse, DT, lubridate, rhandsontable. Use the following command in the console to install these pacakges:
 
 ```console
-> install.packages("flexdashboard"); install.packages("shiny"); install.packages("shinyWidgets"); install.packages("tidyverse"); install.packages("DT"); install.packages("lubridate"); install.packages("rhandsontable")
+> install.packages("flexdashboard"); install.packages("shiny"); install.packages("shinyWidgets"); install.packages("tidyverse"); install.packages("DT")
 ```
 <H3> Installation Instructions </H3>
 
