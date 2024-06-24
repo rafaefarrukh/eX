@@ -2,6 +2,15 @@
 
 EmpowerX is a website written in R for the purpose of assisting FCCU undergraduate students in viewing courses/programs offered by FCCU and tracking their own degree.
 
+<H2> Quick Links </H2>
+
+[Course Catalog](https://empowerx.shinyapps.io/CourseCatalog/): Search courses and programs offered by FCCU.
+
+[Time Table](https://empowerx.shinyapps.io/TimeTable/): Easily view coursed offered by FCCU each semester and generate a time table for your semester.
+
+[Checklist](https://empowerx.shinyapps.io/Checklist/): Generate a checklist of courses you need to study to graduate (can act as a degree audit as well).
+
+
 <H2> Requirements </H2>
 
 EmpowerX requires the following to function:
