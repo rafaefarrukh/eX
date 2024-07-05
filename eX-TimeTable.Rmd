@@ -60,36 +60,31 @@ courses$end <- factor(courses$end)
 
 <!------------------------------------------------------------------------------------------------->
 
-# Search Courses
-
-## column
-
-### {}
-
-```{r SC}
-
-output$table <- renderDT(datatable(
-  courses,
-  rownames = FALSE, 
-  filter = list(position = 'top', clear = TRUE),
-  options = list(
-    dom = 'frtip',
-    pageLength = "100",
-    columnDefs = list(
-      list(width = '5pc', targets = c(0,1,4,5)),
-      list(width = '7pc', targets = c(2,6,7,8,9,10,11)),
-      list(width = '10pc', targets = c(3)),
-      list(className = 'dt-center', targets = c(0,1,2,4,5,7,8,9,10,11))))) %>%
-    formatStyle(c('code', 'title'), fontWeight = 'bold')
-  )
-
-dataTableOutput("table")
-
-```
-
-<!------------------------------------------------------------------------------------------------->
-
 # Your Time Table
+
+## column {.sidebar data-width=300}
+
+### How to use this service
+
+On Search Courses page, click on the course you want to study. You can use the filters and search bar for easier navigation.
+
+These courses will be displayed on this page.
+
+Click on the PDF button to get a pdf file.
+
+### About
+
+empowerX is an unofficial collection of services meant to make degree planning easier for undergraduate students of FCCU. All source files can be found on [github](https://github.com/rafaefarrukh/EmpowerX)
+
+**Other Services**
+
+[Course Catalog](https://empowerx.shinyapps.io/CourseCatalog/): Search courses and programs offered by FCCU.
+
+[Time Table](https://empowerx.shinyapps.io/TimeTable/): Easily view coursed offered by FCCU each semester and generate a time table for your semester.
+
+[Checklist](https://empowerx.shinyapps.io/Checklist/): Generate a checklist of courses you need to study to graduate (can act as a degree audit as well).
+
+## column {data-width=700}
 
 ### {}
 
@@ -163,16 +158,33 @@ renderDT(
 
 ```
 
-### About {data-height="200"}
+<!------------------------------------------------------------------------------------------------->
 
-empowerX is an unofficial collection of services meant to make degree planning easier for undergraduate students of FCCU. All source files can be found here: https://github.com/rafaefarrukh/EmpowerX
+# Search Courses
 
-**Other Services**
+## column
 
-Course Catalog: Search courses and programs offered by FCCU. https://empowerx.shinyapps.io/CourseCatalog/
+### {}
 
-Time Table: Easily view coursed offered by FCCU each semester and generate a time table for your semester. https://empowerx.shinyapps.io/TimeTable/
+```{r SC}
 
-Checklist: Generate a checklist of courses you need to study to graduate (can act as a degree audit as well). https://empowerx.shinyapps.io/Checklist/
+output$table <- renderDT(datatable(
+  courses,
+  rownames = FALSE, 
+  filter = list(position = 'top', clear = TRUE),
+  options = list(
+    dom = 'frtip',
+    pageLength = "100",
+    columnDefs = list(
+      list(width = '5pc', targets = c(0,1,4,5)),
+      list(width = '7pc', targets = c(2,6,7,8,9,10,11)),
+      list(width = '10pc', targets = c(3)),
+      list(className = 'dt-center', targets = c(0,1,2,4,5,7,8,9,10,11))))) %>%
+    formatStyle(c('code', 'title'), fontWeight = 'bold')
+  )
+
+dataTableOutput("table")
+
+```
 
 <!------------------------------------------------------------------------------------------------->
