@@ -66,8 +66,9 @@ get_credits <- function(input) {sum(as.numeric(unlist(filter(courses[4], courses
 renderUI(verticalLayout(
     renderUI(downloadButton(outputId = "export", label = "Export your data")), br(),
     fileInput(inputId = "import", label = "", accept = ".csv", width = "100%", buttonLabel = "Import"),
-    actionButton(inputId = "import_multiple", label = "Click after importing data to refresh EmpowerX", width = "100%")
+    actionButton(inputId = "import_multiple", label = "Load Data", width = "100%")
     ))
+
 
 # export
 output$export <- downloadHandler(
@@ -138,18 +139,33 @@ observeEvent(input$import_multiple, {
 
 ```
 
-### Total Credits
+### Total Credits Selected
 
-```{r D/Credits}
+```{r D/TotalCredits}
 
 renderValueBox(valueBox(
-    value = get_credits(input$s0.0) + get_credits(ged()) + get_credits(input$ma1e) + get_credits(input$ma2e) + get_credits(input$mi1e) + get_credits(input$mi2e) + get_credits(input$sp1e) + get_credits(input$sp2e) + get_credits(input$frel),
+    value = get_credits(input$s0.0) + get_credits(ged()) + get_credits(input$ma1e) + get_credits(input$ma2e) + get_credits(input$mi1e) + get_credits(input$mi2e) + get_credits(input$sp1e) + get_credits(input$sp2e) + get_credits(input$frel) + as.numeric(ma1cr()) + as.numeric(ma2cr()) + as.numeric(mi1cr()) + as.numeric(mi2cr()) + as.numeric(sp1cr()) + as.numeric(sp2cr()),
     icon = "fa-book", color = c("#e0fbfc")
 ))
 
+ma1cr <- reactive(if (input$ma1 == "None") {0} else {unlist(get_program(input$ma1, 9, "major"))})
+ma2cr <- reactive(if (input$ma2 == "None") {0} else {unlist(get_program(input$ma2, 9, "major"))})
+mi1cr <- reactive(if (input$mi1 == "None") {0} else {unlist(get_program(input$mi1, 9, "minor"))})
+mi2cr <- reactive(if (input$mi2 == "None") {0} else {unlist(get_program(input$mi2, 9, "minor"))})
+sp1cr <- reactive(if (input$sp1 == "None") {0} else {unlist(get_program(input$sp1, 9, "specialization"))})
+sp2cr <- reactive(if (input$sp2 == "None") {0} else {unlist(get_program(input$sp2, 9, "specialization"))})
+
 ```
 
-### About {data-height="1000"}
+### How to use this service {data-height=1000}
+
+Add your details in this page. You can change the pre-selected courses in General Education by clicking on them.
+
+Save your data by clicking on export and saving the csv file. If you want to load in your data, then click Import and select your file. Once it is uploaded click on Load Data
+
+Move to the Courses page to see your selected courses in a sorted table. Click on the courses to select them and click again to deselect them. 
+
+**About**
 
 empowerX is an unofficial collection of services meant to make degree planning easier for undergraduate students of FCCU. All source files can be found here: https://github.com/rafaefarrukh/EmpowerX
 
@@ -464,12 +480,14 @@ user_data <- reactive({
     return(temp)
 })
 
-renderDT(
+output$table <- renderDT(
     datatable(
         user_data(),
         rownames = FALSE,
-        extensions = c('Responsive', 'RowGroup'),
+        extensions = c('Responsive', 'RowGroup', 'Buttons'),
         options = list(
+            dom = 'Bfti',
+            buttons = c('copy', 'csv', 'excel', 'pdf', 'print'),
             rowGroup = list(dataSrc = 4),
             bPaginate = FALSE,
             pageLength = 1000,
@@ -478,5 +496,7 @@ renderDT(
             )
         )
     )
+
+dataTableOutput("table")
 
 ```
