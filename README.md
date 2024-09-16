@@ -47,3 +47,17 @@ This [github repo](https://github.com/rafaefarrukh/EmpowerX) contains the follow
 - data files which consist of offline copies of files in the google drive
 - Rmd files (main)
 - README.md: this file
+
+<H2> Updating TimeTable.R </H2>
+
+Chances are I will stop updating the datasets after my graduation, hence here i explain how to update it yourself:
+1. Log into your empower and open the [Course Catalog]([url](https://mysis-fccollege.empower-xl.com/empower/fusebox.cfm?fuseaction=WEBSRQ08)) page.
+2. Select the term.
+3. Download the excel file as "Data/20YYXX.xls" where YY is the year and XX is the session, i.e. FA for fall, SP for spring and SU for summer.
+4. Open TimeTable.R and Navigate to Data - course lists and add the following
+
+```xxyy <- read_xls("Data/20YYXX.xls")```
+
+5. Navigate to Data - combine and add xxyy to the rbind function
+
+```courses <- data.frame(rbind(su24, fa24, xxyy))```
