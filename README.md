@@ -1,4 +1,4 @@
-<H1>eXX</H1>
+<H1>eX</H1>
 
 eX is an **unofficial** collection of services to assist undergraduate students of FCCU in their degree.
 
