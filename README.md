@@ -15,3 +15,5 @@ eX is an **unofficial** collection of services to assist undergraduate students 
 
 [Checklist](https://empowerx.shinyapps.io/Checklist/): Generate a checklist of courses you need to study to graduate (can act as a degree audit as well).
 -->
+
+**Note: Unmentioned Resources are available on [google drive](https://drive.google.com/drive/folders/1bOmOM7RQyZd1iNgxLiu78FI7_dEtQb0K?usp=sharing)**
