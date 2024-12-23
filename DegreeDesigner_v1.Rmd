@@ -1,0 +1,502 @@
+---
+title: "eX - Degree Designer"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    theme: yeti
+    source_code: embed
+runtime: shiny
+---
+
+<!--
+Github repo: https://github.com/rafaefarrukh/eX 
+Read README.md for details such as code notation and data files.
+-->
+
+```{r Setup}
+
+# Libraries ----
+library(flexdashboard); library(shiny); library(tidyverse); library(DT)
+
+# Data ----
+
+## Courses
+courses <- read.csv("data/courses_22.csv")
+names(courses) <- c("Department", "Code", "Title", "Credits", "Details", "Prerequisite", "Crosslisted Code")
+
+## Programs
+programs <- read.csv("data/programs_22.csv")
+names(programs) <- c("Program", "nature", "Details", "Requirements", "Course Categories", "Core Courses", "Elective Courses", "Total Credits", "Core Credits", "Elective Credits", "Total Courses", "Core Courses", "Elective Courses")
+
+# Functions ----
+
+## Extract info from "programs" based on program name and nature
+## Used in: UP/SP/Details UP/SP/Requirements UP/SP/Credits_and_Courses UP/SP/Core UP/SP/Elective UP/SP/Course_Categories YD/C/Courses YD/O/Distribution
+
+get_program <- function(input, output, nature) {
+        
+    # input = name of program
+    # output = {1,2,3...13}; each number represents column of program and the info in it
+    # nature = {degree, major, minor, specialization, certification}
+    
+    temp <- data.frame(str_split(as.character(
+        filter(programs[output], programs[1] == input, programs[2] == nature)), "\n"))
+    
+    names(temp) <- paste0(names(programs[output]))
+    
+    return(temp)
+}
+
+## Calculate total number of credits based on course codes
+## Used in: YD/D/General YD/D/Courses YD/D/Transfer YD/D/Elective YD/S/Edit
+get_credits <- function(input) {sum(as.numeric(unlist(filter(courses[4], courses$Code %in% input))), na.rm = TRUE)}
+
+```
+
+<!------------------------------------------------------------------------------------------------->
+
+# Details
+
+## column {data-width="250"}
+
+### Export and Import Data
+
+```{r YD/D/Export_Import}
+
+renderUI(verticalLayout(
+    renderUI(downloadButton(outputId = "export", label = "Export your data")), br(),
+    fileInput(inputId = "import", label = "", accept = ".csv", width = "100%", buttonLabel = "Import"),
+    actionButton(inputId = "import_multiple", label = "Load Data", width = "100%")
+    ))
+
+
+# export
+output$export <- downloadHandler(
+    filename = function() {paste0('your_degree-', Sys.Date(), '.csv', sep='')}, 
+    content = function(con) {write.csv(as.data.frame(export()), con, row.names = FALSE)})
+
+export <- reactive({
+    
+    temp <- data.frame(rep(NA, 20))
+    
+    temp[1:6, 2] <- as.character(c(input$ma1, input$ma2, input$mi1, input$mi2, input$sp1, input$sp2))
+    
+    temp[,3] <- c(as.character(input$ma1e), rep(NA, 20 - length(as.character(input$ma1e))))
+    temp[,4] <- c(as.character(input$ma2e), rep(NA, 20 - length(as.character(input$ma2e))))
+    temp[,5] <- c(as.character(input$mi1e), rep(NA, 20 - length(as.character(input$mi1e))))
+    temp[,6] <- c(as.character(input$mi2e), rep(NA, 20 - length(as.character(input$mi2e))))
+    temp[,7] <- c(as.character(input$sp1e), rep(NA, 20 - length(as.character(input$sp1e))))
+    temp[,8] <- c(as.character(input$sp2e), rep(NA, 20 - length(as.character(input$sp2e))))
+    
+    temp[,9] <- c(as.character(input$ged1), rep(NA, 20 - length(as.character(input$ged1))))
+    temp[1:2,10] <- c(as.character(input$ged2), rep(NA, 2 - length(as.character(input$ged2))))
+    temp[3:4,10] <- c(as.character(input$ged3), rep(NA, 2 - length(as.character(input$ged3))))
+    temp[5:6,10] <- c(as.character(input$ged4), rep(NA, 2 - length(as.character(input$ged4))))
+    temp[7,10] <- c(as.character(input$ged5))
+    
+    temp[,11] <- c(as.character(input$frel), rep(NA, 20 - length(as.character(input$frel))))
+    
+    temp[,12] <- c(as.character(input$s0.0), rep(NA, 20 - length(as.character(input$s0.0))))
+    
+    return(temp)
+})
+
+# import
+import <- reactive(export())
+
+import <- eventReactive(input$import, {read.csv(input$import$datapath)})
+
+observeEvent(input$import, {
+    
+    updateSelectInput(inputId = "ma1", selected = as.character(import()[1,2]))
+    updateSelectInput(inputId = "ma2", selected = as.character(import()[2,2]))
+    updateSelectInput(inputId = "mi1", selected = as.character(import()[3,2]))
+    updateSelectInput(inputId = "mi2", selected = as.character(import()[4,2]))
+    updateSelectInput(inputId = "sp1", selected = as.character(import()[5,2]))
+    updateSelectInput(inputId = "sp2", selected = as.character(import()[6,2]))
+    
+    updateSelectInput(inputId = "ged2", selected = as.character(import()[1:2,10]))
+    updateSelectInput(inputId = "ged3", selected = as.character(import()[3:4,10]))
+    updateSelectInput(inputId = "ged4", selected = as.character(import()[5:6,10]))
+    updateSelectInput(inputId = "ged5", selected = as.character(import()[7,10]))
+
+})
+
+observeEvent(input$import_multiple, {
+    
+    updateSelectInput(inputId = "ma1e", selected = as.character(import()[,3]))
+    updateSelectInput(inputId = "ma2e", selected = as.character(import()[,4]))
+    updateSelectInput(inputId = "mi1e", selected = as.character(import()[,5]))
+    updateSelectInput(inputId = "mi2e", selected = as.character(import()[,6]))
+    updateSelectInput(inputId = "sp1e", selected = as.character(import()[,7]))
+    updateSelectInput(inputId = "sp2e", selected = as.character(import()[,8]))
+    
+    updateSelectInput(inputId = "ged1", selected = as.character(import()[,9]))
+    updateSelectInput(inputId = "frel", selected = as.character(import()[,11]))
+    updateSelectInput(inputId = "s0.0", selected = as.character(import()[,12]))
+    
+})
+
+```
+
+### Total Credits Selected
+
+```{r D/TotalCredits}
+
+renderValueBox(valueBox(
+    value = get_credits(input$s0.0) + get_credits(ged()) + get_credits(input$ma1e) + get_credits(input$ma2e) + get_credits(input$mi1e) + get_credits(input$mi2e) + get_credits(input$sp1e) + get_credits(input$sp2e) + get_credits(input$frel) + as.numeric(ma1cr()) + as.numeric(ma2cr()) + as.numeric(mi1cr()) + as.numeric(mi2cr()) + as.numeric(sp1cr()) + as.numeric(sp2cr()),
+    icon = "fa-book", color = c("#e0fbfc")
+))
+
+ma1cr <- reactive(if (input$ma1 == "None") {0} else {unlist(get_program(input$ma1, 9, "major"))})
+ma2cr <- reactive(if (input$ma2 == "None") {0} else {unlist(get_program(input$ma2, 9, "major"))})
+mi1cr <- reactive(if (input$mi1 == "None") {0} else {unlist(get_program(input$mi1, 9, "minor"))})
+mi2cr <- reactive(if (input$mi2 == "None") {0} else {unlist(get_program(input$mi2, 9, "minor"))})
+sp1cr <- reactive(if (input$sp1 == "None") {0} else {unlist(get_program(input$sp1, 9, "specialization"))})
+sp2cr <- reactive(if (input$sp2 == "None") {0} else {unlist(get_program(input$sp2, 9, "specialization"))})
+
+```
+
+### How to use this service {data-height=1000}
+
+Add your details in this page. You can change the pre-selected courses in General Education by clicking on them.
+
+Save your data by clicking on export and saving the csv file. If you want to load in your data, then click Import and select your file. Once it is uploaded click on Load Data
+
+Move to the Courses page to see your selected courses in a sorted table. Click on the courses to select them and click again to deselect them. 
+
+**About**
+
+empowerX is an unofficial collection of services meant to make degree planning easier for undergraduate students of FCCU. All source files can be found here: https://github.com/rafaefarrukh/EmpowerX
+
+**Other Services**
+
+Course Catalog: Search courses and programs offered by FCCU. https://empowerx.shinyapps.io/CourseCatalog/
+
+Time Table: Easily view coursed offered by FCCU each semester and generate a time table for your semester. https://empowerx.shinyapps.io/TimeTable/
+
+Checklist: Generate a checklist of courses you need to study to graduate (can act as a degree audit as well). https://empowerx.shinyapps.io/Checklist/
+
+
+## column {data-width="250"}
+
+### Degree Details
+
+```{r YD/D/Details}
+
+selectInput(
+    inputId = "ma1", label = "Major 1",
+    choices = c("None", sort(programs[which(programs[,2] == "major"),1])), selected = "None",
+    width = "100%"
+)
+
+selectInput(
+    inputId = "ma2", label = "Major 2",
+    choices = c("None", sort(programs[which(programs[,2] == "major"),1])), selected = "None",
+    width = "100%"
+)
+
+selectInput(
+    inputId = "mi1", label = "Minor 1", 
+    choices = c("None", sort(programs[which(programs[,2] == "minor"),1])), selected = "None",
+    width = "100%"
+)
+
+selectInput(
+    inputId = "mi2", label = "Minor 2",
+    choices = c("None", sort(programs[which(programs[,2] == "minor"),1])), selected = "None",
+    width = "100%"
+)
+
+selectInput(
+    inputId = "sp1", label = "Specialization 1",
+    choices = c("None", sort(programs[which(programs[,2] == "specialization"),1])), selected = "None",
+    width = "100%"
+)
+
+selectInput(
+    inputId = "sp2", label = "Specialization 2",
+    choices = c("None", sort(programs[which(programs[,2] == "specialization"),1])), selected = "None",
+    width = "100%"
+)
+
+actionButton(inputId = "deselect_yd_d_details", label = "Reset")
+
+observeEvent(input$deselect_yd_d_details, {
+    updateVarSelectInput(inputId = "ma1", selected = "None")
+    updateVarSelectInput(inputId = "ma2", selected = "None")
+    updateVarSelectInput(inputId = "mi1", selected = "None")
+    updateVarSelectInput(inputId = "mi2", selected = "None")
+    updateVarSelectInput(inputId = "sp1", selected = "None")
+    updateVarSelectInput(inputId = "sp2", selected = "None")
+})
+
+```
+
+## column {data-width="250"}
+
+###  {data-height="700"}
+
+```{r YD/D/General}
+
+renderUI(verticalLayout(
+    renderText("Choose General Education Courses"), br(),
+
+    selectizeInput(
+        inputId = "ged1", label = "Compulsory Courses",
+        options = list(maxItems = 8), 
+        choices = sort(unique(courses[,2])),
+        selected = c("UNIV 100", "WRCM 101", "WRCM 102", "PKST 101", "ISLM 101", "URDU 101", "MATH 100", "CSCS 100"),
+        multiple = TRUE, width = "100%"
+        ),
+    
+    selectizeInput(
+        inputId = "ged2", label = "2 Science Lab Courses",
+        options = list(maxItems = 2),
+        choices = arrange(filter(courses[2], 
+                                 courses$Department %in% c("BIOL", "CHEM", "PHYS"),
+                                 courses$Credits %in% c(4))),
+        selected = NA, 
+        multiple = TRUE, width = "100%"
+        ),
+    
+    selectizeInput(
+        inputId = "ged3", label = "2 Social Science Courses",
+        options = list(maxItems = 2),
+        choices = arrange(filter(courses[2], 
+                                 courses$Department %in% c("BUSN", "ECON", "EDUC", "GEOG", "PLSC", "PSYC", "SOCL", "CRIM"),
+                                 courses$Credits %in% c(3,4))),
+        selected = NA, 
+        multiple = TRUE, width = "100%"
+        ),
+    
+    selectizeInput(
+        inputId = "ged4", label = "2 Humanities Courses",
+        options = list(maxItems = 2),
+        choices = arrange(filter(courses[2], 
+                                 courses$Department %in% c("ENGL", "LING", "HIST", "MCOM", "PHIL", "ISLM", "CRST", "URDU", "FREN", "GRMN", "KORN", "CHIN"),
+                                 courses$Credits %in% c(3,4))),
+        selected = NA, 
+        multiple = TRUE, width = "100%"
+    ),
+    
+    selectizeInput(
+        inputId = "ged5", label = "1 Course from any Domain",
+        options = list(maxItems = 1),
+        choices = c("PHIL 221", arrange(filter(courses[2], 
+                                               courses$Department %in% c("CSCS", "COMP", "MATH", "STAT", "BIOL", "BIOT", "ENVR", "CHEM", "PHYS"),
+                                               courses$Credits %in% c(3,4)))),
+        selected = NA, 
+        multiple = FALSE,  width = "100%"
+    ),
+    
+    renderText(paste("Number of Credits = ", get_credits(ged()))), br(), hr(), br(),
+    renderText("Choose Transfer Courses"),
+    
+    selectInput(inputId = "s0.0", label = "", choices = sort(unique(courses[,2])), selected = NA, multiple = TRUE,  width = "100%"),
+    
+    renderText(paste("Number of Credits = ", get_credits(input$s0.0)))
+
+))
+
+ged <- reactive(rbind(input$ged1, input$ged2, input$ged3, input$ged4, input$ged5))
+
+```
+
+## column {data-width="250"}
+
+### Choose Free Elective Courses {data-height="300"}
+
+```{r YD/D/Elective}
+
+renderUI(verticalLayout(
+    
+    selectInput(inputId = "frel", label = "Free Electives", choices = sort(unique(courses[,2])), selected = NA, multiple = TRUE, width = "100%"),
+    
+    renderText(paste("Number of Credits = ", get_credits(input$frel))), br(), hr(), br(),
+    
+    # ma1e
+    conditionalPanel(
+        condition = "input.ma1 != 'None'",
+        renderUI({
+            if (input$ma1 != "None") {if (as.numeric(get_program(input$ma1, 10, "major")) == 0) {"No Elective Courses for Major 1"} else {
+                selectInput(
+                    inputId = "ma1e", label = "Major 1 Elective Courses",
+                    choices = filter(courses[2], courses$Code %in% unlist(get_program(input$ma1, 7, "major"))), selected = NA,
+                    multiple = TRUE, width = "100%"
+                    )}}}),
+        renderText(
+            if (input$ma1 != "None") {
+                if (as.numeric(get_program(input$ma1, 10, "major")) == 0) {NULL} else
+                    {paste("Number of Credits =", get_credits(input$ma1e), "/", get_program(input$ma1, 10, "major"))}}), br()
+        ),
+    
+    # ma2e
+    conditionalPanel(
+        condition = "input.ma2 != 'None'",
+        renderUI({
+            if (input$ma2 != "None") {if (as.numeric(get_program(input$ma2, 10, "major")) == 0) {"No Elective Courses for Major 2"} else {
+                selectInput(
+                    inputId = "ma2e", label = "Major 2 Elective Courses",
+                    choices = filter(courses[2], courses$Code %in% unlist(get_program(input$ma2, 7, "major"))), selected = NA,
+                    multiple = TRUE, width = "100%"
+                    )}}}),
+        renderText(
+            if (input$ma2 != "None") {
+                if (as.numeric(get_program(input$ma2, 10, "major")) == 0) {NULL} else
+                    {paste("Number of Credits =", get_credits(input$ma2e), "/", get_program(input$ma2, 10, "major"))}}), br()
+        ),
+    
+    # mi1e
+    conditionalPanel(
+        condition = "input.mi1 != 'None'",
+        renderUI({
+            if (input$mi1 != "None") {if (as.numeric(get_program(input$mi1, 10, "minor")) == 0) {"No Elective Courses for Minor 1"} else {
+                selectInput(
+                    inputId = "mi1e", label = "Minor 1 Elective Courses",
+                    choices = filter(courses[2], courses$Code %in% unlist(get_program(input$mi1, 7, "minor"))), selected = NA, 
+                    multiple = TRUE, width = "100%"
+                    )}}}),
+        renderText(
+            if (input$mi1 != "None") {
+                if (as.numeric(get_program(input$mi1, 10, "minor")) == 0) {NULL} else
+                    {paste("Number of Credits =", get_credits(input$mi1e), "/", get_program(input$mi1, 10, "minor"))}}), br()
+        ),
+    
+    # mi2e
+    conditionalPanel(
+        condition = "input.mi2 != 'None'",
+        renderUI({
+            if (input$mi2 != "None") {if (as.numeric(get_program(input$mi2, 10, "minor")) == 0) {"No Elective Courses for Minor 1"} else {
+                selectInput(
+                    inputId = "mi2e", label = "Minor 2 Elective Courses", 
+                    choices = filter(courses[2], courses$Code %in% unlist(get_program(input$mi2, 7, "minor"))), selected = NA,
+                    multiple = TRUE, width = "100%"
+                    )}}}),
+        renderText(
+            if (input$mi2 != "None") {
+                if (as.numeric(get_program(input$mi2, 10, "minor")) == 0) {NULL} else
+                    {paste("Number of Credits =", get_credits(input$mi2e), "/", get_program(input$mi2, 10, "minor"))}}), br()
+        ),
+    
+    # sp1e
+    conditionalPanel(
+        condition = "input.sp1 != 'None'",
+        renderUI({
+            if (input$sp1 != "None") {if (as.numeric(get_program(input$sp1, 10, "specialization")) == 0)  {"No Elective Courses for Specialization 1"} else {
+                selectInput(
+                    inputId = "sp1e", label = "specialization 1 Elective Courses",
+                    choices = filter(courses[2], courses$Code %in% unlist(get_program(input$sp1, 7, "specialization"))), selected = NA,
+                    multiple = TRUE, width = "100%"
+                    )}}}),
+        renderText(
+            if (input$sp1 != "None") {
+                if (as.numeric(get_program(input$sp1, 10, "specialization")) == 0) {NULL} else
+                    {paste("Number of Credits =", get_credits(input$sp1e), "/", get_program(input$sp1, 10, "specialization"))}}), br()
+        ), br(),
+    
+    # sp2e
+    conditionalPanel(
+        condition = "input.sp2 != 'None'",
+        renderUI({
+            if (input$sp2 != "None") {if (as.numeric(get_program(input$sp2, 10, "specialization")) == 0) {"No Elective Courses for specialization 1"} else {
+                selectInput(
+                    inputId = "sp2e", label = "Specialization 2 Elective Courses",
+                    choices = filter(courses[2], courses$Code %in% unlist(get_program(input$sp2, 7, "specialization"))), selected = NA,
+                    multiple = TRUE, width = "100%"
+                    )}}}),
+        renderText(
+            if (input$sp2 != "None") {
+                if (as.numeric(get_program(input$sp2, 10, "specialization")) == 0) {NULL} else
+                    {paste("Number of Credits =", get_credits(input$sp2e), "/", get_program(input$sp2, 10, "specialization"))}})
+        )
+    ))
+
+```
+
+<!------------------------------------------------------------------------------------------------->
+
+# Courses
+
+## column
+
+### {}
+
+```{r YD/C/}
+
+user_data <- reactive({
+    
+    req(ged());
+    
+    # get courses
+    temp <- rbind(
+        filter(courses[c(2:4,6)], courses$Code %in% as.character(ged())),
+        filter(courses[c(2:4,6)], courses$Code %in% as.character(input$frel)),
+        
+        filter(courses[c(2:4,6)], courses$Code %in% unlist(get_program(as.character(input$ma1), 6, "major"))),
+        filter(courses[c(2:4,6)], courses$Code %in% unlist(get_program(as.character(input$ma2), 6, "major"))),
+        filter(courses[c(2:4,6)], courses$Code %in% unlist(get_program(as.character(input$mi1), 6, "minor"))),
+        filter(courses[c(2:4,6)], courses$Code %in% unlist(get_program(as.character(input$mi2), 6, "minor"))),
+        filter(courses[c(2:4,6)], courses$Code %in% unlist(get_program(as.character(input$sp1), 6, "specialization"))),
+        filter(courses[c(2:4,6)], courses$Code %in% unlist(get_program(as.character(input$sp2), 6, "specialization"))),
+        
+        filter(courses[c(2:4,6)], courses$Code %in% as.character(input$ma1e)),
+        filter(courses[c(2:4,6)], courses$Code %in% as.character(input$ma2e)),
+        filter(courses[c(2:4,6)], courses$Code %in% as.character(input$mi1e)),
+        filter(courses[c(2:4,6)], courses$Code %in% as.character(input$mi2e)),
+        filter(courses[c(2:4,6)], courses$Code %in% as.character(input$sp1e)),
+        filter(courses[c(2:4,6)], courses$Code %in% as.character(input$sp2e))
+    )
+    
+    # make columns for requirement
+    temp$Requirement <- NA;
+    
+    # assign requirements
+    
+    ## general education
+    temp[which(temp[,1] %in% as.character(ged())),5] <- "General Education"
+    
+    ## core courses
+    temp[which(temp[,1] %in% unlist(get_program(input$ma1, 6, "major"))),5] <- paste0("Major 1 (", as.character(input$ma1), ") Core")
+    temp[which(temp[,1] %in% unlist(get_program(input$ma2, 6, "major"))),5] <- paste0("Major 2 (", as.character(input$ma2), ") Core")
+    temp[which(temp[,1] %in% unlist(get_program(input$mi1, 6, "minor"))),5] <- paste0("Minor 1 (", as.character(input$mi1), ") Core")
+    temp[which(temp[,1] %in% unlist(get_program(input$mi2, 6, "minor"))),5] <- paste0("Minor 2 (", as.character(input$mi2), ") Core")
+    temp[which(temp[,1] %in% unlist(get_program(input$sp1, 6, "specialization"))),5] <- paste0("Specialization 1 (", as.character(input$sp1), ") Core")
+    temp[which(temp[,1] %in% unlist(get_program(input$sp2, 6, "specialization"))),5] <- paste0("Specialization 2 (", as.character(input$sp2), ") Core")
+    
+    ## elective courses
+    temp[which(temp[,1] %in% as.character(input$ma1e)),5] <- paste0("Major 1 (", as.character(input$ma1), ") Elective")
+    temp[which(temp[,1] %in% as.character(input$ma2e)),5] <- paste0("Major 2 (", as.character(input$ma2), ") Elective")
+    temp[which(temp[,1] %in% as.character(input$mi1e)),5] <- paste0("Minor 1 (", as.character(input$mi1), ") Elective")
+    temp[which(temp[,1] %in% as.character(input$mi2e)),5] <- paste0("Minor 2 (", as.character(input$mi2), ") Elective")
+    temp[which(temp[,1] %in% as.character(input$sp1e)),5] <- paste0("Specialization 1 (", as.character(input$sp1), ") Elective")
+    temp[which(temp[,1] %in% as.character(input$sp2e)),5] <- paste0("Specialization 2 (", as.character(input$sp2), ") Elective")
+    
+    ## free electives
+    temp[which(temp[,1] %in% as.character(input$frel)),5] <- "Free Elective"
+
+    # final
+    temp <- temp[order(temp$Requirement, temp$Code),]
+    return(temp)
+})
+
+output$table <- renderDT(
+    datatable(
+        user_data(),
+        rownames = FALSE,
+        extensions = c('Responsive', 'RowGroup', 'Buttons'),
+        options = list(
+            dom = 'Bfti',
+            buttons = c('copy', 'csv', 'excel', 'pdf', 'print'),
+            rowGroup = list(dataSrc = 4),
+            bPaginate = FALSE,
+            pageLength = 1000,
+            scrollY = "200px",
+            columnDefs = list(list(className = 'dt-center', targets = c(2,4)))
+            )
+        )
+    )
+
+dataTableOutput("table")
+
+```

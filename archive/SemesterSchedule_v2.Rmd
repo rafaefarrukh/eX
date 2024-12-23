@@ -1,0 +1,173 @@
+---
+geometry: paperheight=22cm,paperwidth=30cm,margin=0.5cm
+output:
+  pdf_document:
+    includes:
+      in_header: "preamble.tex"
+---
+
+<!-- HOW TO USE 
+
+1. In the R chunk, navigate to the "Extract Courses (MANUAL)" section
+2. Replace "DEPT XXX" with course code and "X" with section
+3. Add more rows if required.
+4. Note that there should be at least one course per day, otherwise you will have to modify the code
+5. Render document
+
+-->
+
+```{r include=FALSE}
+
+# Libraries
+library(tidyverse); library(readxl)
+
+# Data
+courses <- read_xls("Data/2025SP.xls")
+
+# Cleaning (AUTOMATIC) ----
+
+## change col names
+names(courses) <- c("term", "dept", "codeOnly", "sec", "session", "title", "loc", "room", "days", "time", "instructor", "credits", "available", "offered", "date", "location", "method", "enrolled")
+
+## separate time into start and end
+## join dept name and course code
+## remove unwanted cols
+courses <- courses %>% 
+  mutate(seats = paste(available, "/", offered),
+         start = str_sub(time, 1, 5),
+         end = str_sub(time, 9,14),
+         code = paste(dept, codeOnly)) %>%
+  mutate(codeOnly = NULL, session = NULL, loc = NULL, time = NULL, available = NULL, offered = NULL, date = NULL, location = NULL, method = NULL, enrolled = NULL)
+
+## rearrange cols
+courses <- courses[,c(1,2,12,4,3,8,7,6,10,11,5,9)]
+
+## remove "&" as it causes LaTeX error
+courses$title[which(str_detect(courses$title, "&"))] <- str_replace_all(courses$title[which(str_detect(courses$title, "&"))], "&", "and")
+
+# Extract Courses (MANUAL) ----
+
+# Select courses
+selected <- data.frame(rbind(
+    courses[which(courses[,3] == "GRMN 101" & courses$sec == "C"),],
+    courses[which(courses[,3] == "BIOL 203"),],
+    courses[which(courses[,3] == "BIOT 313"),],
+    courses[which(courses[,3] == "MATH 301"),],
+    courses[which(courses[,3] == "MATH 302"),],
+    courses[which(courses[,3] == "MATH 307"),]
+))
+
+# Transform Data (AUTOMATIC) ----
+
+tempM <- data.frame(day = "1", selected[which(str_detect(selected[,8], "M")),c(3:11)])
+tempM <- arrange(tempM, day, start)
+tempM <- tempM %>%
+    mutate(course = paste0(code, ": ", title, " (", sec, ") (", credits, ")")) %>%
+    mutate(code = NULL, title = NULL, sec = NULL, credits = NULL, days = NULL)
+tempM <- tempM[,c(1,6,3,4,5,2)]
+
+tempT <- data.frame(day = "2", selected[which(str_detect(selected[,8], "T")),c(3:11)])
+tempT <- arrange(tempT, day, start)
+tempT <- tempT %>%
+    mutate(course = paste0(code, ": ", title, " (", sec, ") (", credits, ")")) %>%
+    mutate(code = NULL, title = NULL, sec = NULL, credits = NULL, days = NULL)
+tempT <- tempT[,c(1,6,3,4,5,2)]
+
+
+tempW <- data.frame(day = "3", selected[which(str_detect(selected[,8], "W")),c(3:11)])
+tempW <- arrange(tempW, day, start)
+tempW <- tempW %>%
+    mutate(course = paste0(code, ": ", title, " (", sec, ") (", credits, ")")) %>%
+    mutate(code = NULL, title = NULL, sec = NULL, credits = NULL, days = NULL)
+tempW <- tempW[,c(1,6,3,4,5,2)]
+
+
+tempR <- data.frame(day = "4", selected[which(str_detect(selected[,8], "R")),c(3:11)])
+tempR <- arrange(tempR, day, start)
+tempR <- tempR %>%
+    mutate(course = paste0(code, ": ", title, " (", sec, ") (", credits, ")")) %>%
+    mutate(code = NULL, title = NULL, sec = NULL, credits = NULL, days = NULL)
+tempR <- tempR[,c(1,6,3,4,5,2)]
+
+
+tempF <- data.frame(day = "5", selected[which(str_detect(selected[,8], "F")),c(3:11)])
+tempF <- arrange(tempF, day, start)
+tempF <- tempF %>%
+    mutate(course = paste0(code, ": ", title, " (", sec, ") (", credits, ")")) %>%
+    mutate(code = NULL, title = NULL, sec = NULL, credits = NULL, days = NULL)
+tempF <- tempF[,c(1,6,3,4,5,2)]
+
+## overview information
+nco <- length(unique(selected$code))
+ncr <- sum(selected$credits[which(!duplicated(selected$code))])
+
+# Generate LaTeX Code (AUTOMATIC)----
+
+tempML <- 1:nrow(tempM)
+for (i in 1:nrow(tempM)) {
+    tempML[i] <- paste0(
+        "&", tempM[i,2], "&", tempM[i,3], "&", tempM[i,4], "&", tempM[i,5], "&", tempM[i,6], "\\\\")
+}
+tempML <- paste0(tempML, collapse = "")
+
+
+tempTL <- 1:nrow(tempT)
+for (i in 1:nrow(tempT)) {
+    tempTL[i] <- paste0(
+        "&", tempT[i,2], "&", tempT[i,3], "&", tempT[i,4], "&", tempT[i,5], "&", tempT[i,6], "\\\\")
+}
+tempTL <- paste0(tempTL, collapse = "")
+
+tempWL <- 1:nrow(tempW)
+for (i in 1:nrow(tempW)) {
+    tempWL[i] <- paste0(
+        "&", tempW[i,2], "&", tempW[i,3], "&", tempW[i,4], "&", tempW[i,5], "&", tempW[i,6], "\\\\")
+}
+tempWL <- paste0(tempWL, collapse = "")
+
+tempRL <- 1:nrow(tempR)
+for (i in 1:nrow(tempR)) {
+    tempRL[i] <- paste0(
+        "&", tempR[i,2], "&", tempR[i,3], "&", tempR[i,4], "&", tempR[i,5], "&", tempR[i,6], "\\\\")
+}
+tempRL <- paste0(tempRL, collapse = "")
+
+tempFL <- 1:nrow(tempF)
+for (i in 1:nrow(tempF)) {
+    tempFL[i] <- paste0(
+        "&", tempF[i,2], "&", tempF[i,3], "&", tempF[i,4], "&", tempF[i,5], "&", tempF[i,6], "\\\\")
+}
+tempFL <- paste0(tempFL, collapse = "")
+
+```
+
+```{=latex}
+
+\begin{center} \textbf{\textcolor{teal!60!black}{{\huge Time Table - SPRING 2025}}} \end{center}
+\begin{center} \textbf{\textcolor{teal!60!black}{{\large `r nco` courses - `r ncr` credits}}} \end{center} 
+\phantom{}
+
+\begin{tabularx}{\textwidth}{@{}Y{2.5cm}p{12cm}Y{2.5cm}Y{2.5cm}Y{2.5cm}p{4.9cm}@{}}
+
+    \arrayrulecolor{teal!60!black} \hline
+    \textbf{\textcolor{teal!60!black}{Day}} & 
+    \textbf{\textcolor{teal!60!black}{Course (section) (credits)}} & 
+    \textbf{\textcolor{teal!60!black}{Start Time}} & 
+    \textbf{\textcolor{teal!60!black}{End Time}} & 
+    \textbf{\textcolor{teal!60!black}{Room}} & 
+    \textbf{\textcolor{teal!60!black}{Instructor}} \\ \hline
+
+    \phantom{} \\ \hline
+    \multirow{`r nrow(tempM)`}{*}{\textbf{\textcolor{teal!60!black}{Monday}}} `r tempML` \hline
+    \phantom{} \\ \hline
+    \multirow{`r nrow(tempT)`}{*}{\textbf{\textcolor{teal!60!black}{Tuesday}}} `r tempTL` \hline
+    \phantom{} \\ \hline
+    \multirow{`r nrow(tempW)`}{*}{\textbf{\textcolor{teal!60!black}{Wednesday}}} `r tempWL` \hline
+    \phantom{} \\ \hline
+    \multirow{`r nrow(tempR)`}{*}{\textbf{\textcolor{teal!60!black}{Thursday}}} `r tempRL` \hline
+    \phantom{} \\ \hline
+    \multirow{`r nrow(tempF)`}{*}{\textbf{\textcolor{teal!60!black}{Friday}}} `r tempFL` \hline
+
+\end{tabularx}
+
+```
