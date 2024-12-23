@@ -1,19 +1,29 @@
 <H1>eX</H1>
 
-eX is an **unofficial** collection of services to assist undergraduate students of FCCU in their degree.
+eX is an **unofficial** collection of services to assist undergraduate students of FCCU in their degree. 
 
-**Note: eX is hosted online using free resources, because of which the website versions are slow. It is highly reccomended that you download eX.**
+These services include:
 
-<H2> Quick Links </H2>
+- [Course Catalog](https://exex.shinyapps.io/CourseCatalog/)
+- [Degree Designer](https://exex.shinyapps.io/DegreeDesigner/#section-details)
+- [Semester Schedule](https://exex.shinyapps.io/SemesterSchedule/)
+- [Evaluation](https://exex.shinyapps.io/Evaluation/)
+- [Academic Calendar](https://docs.google.com/spreadsheets/d/1kbZqG3CFegX50vrymNBcXUdZzrMSHc41Xp_AQXLf7oU/edit?usp=sharing)
+- [Contact Information](https://docs.google.com/spreadsheets/d/1qxjgJ14DPFOLWINAbpS96FXOm3uJyYExn4ZCtraBs7Y/edit?usp=sharing)
+- [Degree Details](https://docs.google.com/presentation/d/1wNlD8vg7x3tcjiLmcrI9i-A85srGWd2PKpjfrWxOYx4/edit?usp=sharing)
+- And Much More (in development)
 
-[Evaluation](https://empowerx.shinyapps.io/eX-Evaluation/): Evaluate courses and instructors.
+Relevant Links
+- [Main Website](https://sites.google.com/formanite.fccollege.edu.pk/exex?usp=sharing) (Published Site)
+- Google Drive [(Restricted)](https://drive.google.com/drive/folders/1BMhFFwi2kjcJrrBReenE3ZXKXEoKlxrV?usp=sharing) [(View Access)](https://drive.google.com/drive/folders/19MrmF-1lpaJI4Juke8OLd4PKBtFWCRvN?usp=sharing) [(Edit Access)](https://drive.google.com/drive/folders/10xCoa0n9GI3Yemr6-YUQP67oBhLCWH2Z?usp=sharing)
+- [Github](https://github.com/rafaefarrukh/eX)
+- [Shiny Apps Server](https://www.shinyapps.io/admin/#/dashboard)
 
-[Semester Schedule](https://empowerx.shinyapps.io/eX-SemesterSchedule/): Search courses offered in a semester and generate a time table. *This is an improved version of empower's Course Schedule feature.*
 
-<!--
-[Course Catalog](https://empowerx.shinyapps.io/CourseCatalog/): Search courses and programs offered by FCCU.
-
-[Checklist](https://empowerx.shinyapps.io/Checklist/): Generate a checklist of courses you need to study to graduate (can act as a degree audit as well).
--->
-
-**Note: Unmentioned Resources are available on [google drive](https://drive.google.com/drive/folders/1bOmOM7RQyZd1iNgxLiu78FI7_dEtQb0K?usp=sharing)**
+Things To Do
+- Academic Calendar v2
+- Tuition Fees v1
+- Course Catalog v2
+- Degree Designer v2
+- Semester Schedule v4
+- Other: optimizations and improvements
